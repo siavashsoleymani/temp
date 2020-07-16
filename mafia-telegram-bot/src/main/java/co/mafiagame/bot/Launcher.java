@@ -16,22 +16,21 @@
  *     along with Mafiagame.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package co.mafiagame.bot;
+package co.mafiagame;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
-@ComponentScan(basePackages = "co.mafiagame")
-@Configuration
-@EnableAutoConfiguration
+@SpringBootApplication
 @EnableScheduling
 public class Launcher {
 	private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
