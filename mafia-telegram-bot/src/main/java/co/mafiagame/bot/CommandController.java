@@ -18,89 +18,105 @@
 
 package co.mafiagame.bot;
 
+import co.mafiagame.bot.persistence.repository.AccountRepository;
 import co.mafiagame.bot.telegram.TResult;
 import co.mafiagame.bot.telegram.TUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Esa Hekmatizadeh
  */
 @RestController
 public class CommandController {
-	private static final Logger logger = LoggerFactory.getLogger(CommandController.class);
-	@Value("${mafia.telegram.token}")
-	private String telegramToken;
-	@Value("${mafia.telegram.api.url}")
-	private String telegramUrl;
-	private final CommandDispatcher commandDispatcher;
-	private final RestTemplate restTemplate;
-	private volatile long offset = 1;
+    private static final Logger logger = LoggerFactory.getLogger(CommandController.class);
+    @Value("${mafia.telegram.token}")
+    private String telegramToken;
+    @Value("${mafia.telegram.api.url}")
+    private String telegramUrl;
+    @Value("${mafia.telegram.use.webhook}")
+    private Boolean webHookEnabled;
+    private final CommandDispatcher commandDispatcher;
+    private final RestTemplate restTemplate;
+    private volatile long offset = 1;
+    private final AccountRepository accountRepository;
 
-	@Autowired
-	public CommandController(CommandDispatcher commandDispatcher, RestTemplate restTemplate) {
-		this.commandDispatcher = commandDispatcher;
-		this.restTemplate = restTemplate;
-	}
+    @Autowired
+    public CommandController(CommandDispatcher commandDispatcher,
+                             RestTemplate restTemplate, AccountRepository accountRepository) {
+        this.commandDispatcher = commandDispatcher;
+        this.restTemplate = restTemplate;
+        this.accountRepository = accountRepository;
+    }
 
-	@PostConstruct
-	@ConditionalOnProperty(prefix = "mafia.telegram.use.webhook", value = "false")
-	@Scheduled(fixedDelay = 200)
-	public void init() {
-		try {
-			TResult tResult = restTemplate.getForObject(
-					telegramUrl + telegramToken + "/getUpdates?offset=" + String.valueOf(offset + 1),
-					TResult.class);
-			if (Objects.isNull(tResult))
-				return;
-			tResult.getResult().forEach((update) -> {
-				if (offset < update.getId()) {
-					offset = update.getId();
-					handleMessage(update);
-					logger.debug("offset set to {}", offset);
-				}
-			});
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
+    @Scheduled(fixedDelay = 200)
+    public void init() {
+        if (webHookEnabled)
+            return;
+        try {
+            TResult tResult = restTemplate.getForObject(
+                    telegramUrl + telegramToken + "/getUpdates?offset=" + (offset + 1),
+                    TResult.class);
+            if (Objects.isNull(tResult))
+                return;
+            tResult.getResult().forEach((update) -> {
+                if (offset < update.getId()) {
+                    offset = update.getId();
+                    handleMessage(update);
+                    logger.debug("offset set to {}", offset);
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
 
-	@PostMapping("/{token}/update")
-	public void getUpdate(@PathVariable String token, @RequestBody TUpdate update) {
-		logger.info("receive: {}", update);
-		if (!validate(token)) {
-			logger.warn("Suspicious connection with token {} and update {}", token, update);
-			return;
-		}
-		handleMessage(update);
-	}
+    @PostMapping("/{token}/update")
+    public void getUpdate(@PathVariable String token, @RequestBody TUpdate update) {
+        logger.info("receive: {}", update);
+        if (!validate(token)) {
+            logger.warn("Suspicious connection with token {} and update {}", token, update);
+            return;
+        }
+        handleMessage(update);
+    }
 
-	private void handleMessage(TUpdate update) {
-		logger.info("receive: {}", update);
-		if (Objects.nonNull(update.getMessage())) {
-			commandDispatcher.handleMessage(update.getMessage());
-		} else if (Objects.nonNull(update.getCallBackQuery())) {
-			commandDispatcher.handleCallback(update.getCallBackQuery());
-		}
-	}
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 
-	private boolean validate(String token) {
-		return telegramToken.equalsIgnoreCase(token);
-	}
+    @PostMapping("/sendMessageToAll")
+    public void sendToAll(@RequestBody Map<String, String> map) {
+        accountRepository.findAll()
+                .forEach(a -> restTemplate.getForObject("https://api.telegram.org/"
+                        + "bot"
+                        + telegramToken
+                        + "/sendMessage?chat_id="
+                        + a.getTelegramUserId()
+                        + "&text="
+                        + map.get("text"), Object.class));
+    }
+
+    private void handleMessage(TUpdate update) {
+        logger.info("receive: {}", update);
+        if (Objects.nonNull(update.getMessage())) {
+            commandDispatcher.handleMessage(update.getMessage());
+        } else if (Objects.nonNull(update.getCallBackQuery())) {
+            commandDispatcher.handleCallback(update.getCallBackQuery());
+        }
+    }
+
+    private boolean validate(String token) {
+        return telegramToken.equalsIgnoreCase(token);
+    }
 
 }

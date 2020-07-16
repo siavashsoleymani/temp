@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: 'mafia-postgres'
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres2
+      POSTGRES_PASSWORD: root
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+  mafia:
+    container_name: 'mafia-app'
+    image: siavashsolimani/mafiabot:latest
+    ports:
+      - "8443:8443"
+    environment:
+      - DB_URI=jdbc:postgresql://postgres:5432/mafia
+      - DB_USERNAME=postgres2
+      - DB_PASSWORD=root
+      - SERVER_PORT=8443
+      - WEB_HOOK_ENABLED=true
+  mafiasite:
+    container_name: 'mafia-web-site'
+    image: siavashsolimani/mafiasite:latest
+    ports:
+      - "80:80"

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public class TReplyKeyboardMarkup {
 	private List<List<String>> keyboard = new ArrayList<>();

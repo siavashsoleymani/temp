@@ -68,7 +68,7 @@ public class Room {
 	}
 
 	public Optional<Account> findPlayer(String fullName) {
-		return accounts.stream().filter(a -> a.fullName().trim().equals(fullName.trim())).findAny();
+		return accounts.stream().filter(a -> a.fullName().trim().equalsIgnoreCase(fullName.trim())).findAny();
 	}
 
 	public Long getRoomId() {

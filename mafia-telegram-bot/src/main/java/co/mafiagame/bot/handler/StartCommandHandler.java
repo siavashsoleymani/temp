@@ -84,8 +84,8 @@ public class StartCommandHandler extends TelegramCommandHandler {
 
 	private void handleStartGame(TMessage message, MessageHolder.Lang lang) {
 		if (message.getText().matches("\\d+") ||
-				message.getText().equals(MessageHolder.get("no", lang)) ||
-				message.getText().equals(MessageHolder.get("yes", lang))) {
+				message.getText().equalsIgnoreCase(MessageHolder.get("no", lang)) ||
+				message.getText().equalsIgnoreCase(MessageHolder.get("yes", lang))) {
 			gameInfoProvided(message, lang);
 			return;
 		}
@@ -164,7 +164,7 @@ public class StartCommandHandler extends TelegramCommandHandler {
 	}
 
 	private void readDetective(StartGameState startGameState, TMessage message, MessageHolder.Lang lang) {
-		startGameState.hasDetective = message.getText().equals(MessageHolder.get("yes", lang));
+		startGameState.hasDetective = message.getText().equalsIgnoreCase(MessageHolder.get("yes", lang));
 		client.send(new SendMessageWithReplyKeyboard()
 				.setReplyMarkup(new TReplyKeyboardMarkup()
 						.setKeyboard(Collections.singletonList(Arrays.asList(
@@ -181,7 +181,7 @@ public class StartCommandHandler extends TelegramCommandHandler {
 
 
 	private void readDoctor(StartGameState startGameState, TMessage message, MessageHolder.Lang lang) {
-		startGameState.hasDoctor = message.getText().equals(MessageHolder.get("yes", lang));
+		startGameState.hasDoctor = message.getText().equalsIgnoreCase(MessageHolder.get("yes", lang));
 		Game game = new Game(String.valueOf(message.getChat().getId()),
 				startGameState.citizenNo, startGameState.mafiaNo,
 				startGameState.hasDoctor, startGameState.hasDetective, botConfiguration.configuration());

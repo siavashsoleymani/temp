@@ -21,7 +21,7 @@ package co.mafiagame.bot.telegram;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public class TChat {
 	private Long id;
@@ -94,7 +94,7 @@ public class TChat {
 
 	@Override
 	public String toString() {
-		if ("private".equals(type))
+		if ("private".equalsIgnoreCase(type))
 			return "Private Chat " + id + " (" + username + "-" + firstName + " " + lastName + ")";
 		else
 			return "Group Chat " + id + "(" + title + ")";

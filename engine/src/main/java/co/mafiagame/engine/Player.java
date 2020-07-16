@@ -55,7 +55,7 @@ public class Player {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Player player = (Player) o;
-		return userId.equals(player.userId);
+		return userId.equalsIgnoreCase(player.userId);
 	}
 
 	@Override

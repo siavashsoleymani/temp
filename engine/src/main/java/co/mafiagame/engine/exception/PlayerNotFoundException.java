@@ -19,7 +19,7 @@
 package co.mafiagame.engine.exception;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public class PlayerNotFoundException extends MafiaException {
 	private final String userId;

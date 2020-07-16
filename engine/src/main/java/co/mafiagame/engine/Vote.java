@@ -54,7 +54,7 @@ public class Vote {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Vote vote = (Vote) o;
-		return Objects.equals(voterUserId, vote.voterUserId);
+		return voterUserId.equalsIgnoreCase(vote.voterUserId);
 	}
 
 	@Override

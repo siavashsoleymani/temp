@@ -37,7 +37,7 @@ public class ElectionResult {
 	ElectionResult(Collection<Vote> votes) {
 		this.votes.addAll(votes);
 		result = this.votes.stream().map(Vote::getCandidateUserIds)
-				.map(l -> l.stream().filter(id -> !Objects.equals("nobody", id)))
+				.map(l -> l.stream().filter(id -> !"nobody".equalsIgnoreCase(id)))
 				.flatMap(Function.identity())
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 		Long maxCount = result.values().stream().max(Long::compareTo).orElseThrow(IllegalArgumentException::new);

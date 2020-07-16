@@ -34,7 +34,7 @@ public class ApplicationConfiguration {
 	@Bean
 	public RestTemplate restTemplateWithProxy() {
 		SimpleClientHttpRequestFactory clientHttpReq = new SimpleClientHttpRequestFactory();
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8123));
+		Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 8090));
 		clientHttpReq.setProxy(proxy);
 		RestTemplate restTemplate = new RestTemplate(clientHttpReq);
 		setErrorHandler(restTemplate);

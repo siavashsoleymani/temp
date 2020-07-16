@@ -65,7 +65,7 @@ public class VoteCommandHandler extends TelegramCommandHandler {
 		if (!votes.containsKey(message.getFrom().getId()))
 			votes.put(message.getFrom().getId(), new ArrayList<>());
 
-		if (MessageHolder.get("done", room.getLang()).equals(message.getText()))
+		if (MessageHolder.get("done", room.getLang()).equalsIgnoreCase(message.getText()))
 			handleDone(message, room);
 		else {
 			int length = MessageHolder.get("vote.to", room.getLang()).length();

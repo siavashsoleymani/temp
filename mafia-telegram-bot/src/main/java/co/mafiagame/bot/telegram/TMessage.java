@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public class TMessage {
 	@JsonProperty("message_id")
@@ -225,7 +225,7 @@ public class TMessage {
 
 	@JsonIgnore
 	public boolean isGroup() {
-		return "group".equals(chat.getType()) || "supergroup".equals(chat.getType());
+		return "group".equalsIgnoreCase(chat.getType()) || "supergroup".equalsIgnoreCase(chat.getType());
 	}
 
 	@Override

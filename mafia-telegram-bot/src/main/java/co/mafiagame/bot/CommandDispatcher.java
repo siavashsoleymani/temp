@@ -120,7 +120,7 @@ public class CommandDispatcher {
 	}
 
 	private Optional<String> getCommand(String message) {
-		String pureMessage = removeSlash(message);
+		String pureMessage = removeSlash(message).toLowerCase();
 		return commandHandlers.keySet().stream().filter(pureMessage::startsWith).findAny();
 	}
 }

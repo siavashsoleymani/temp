@@ -23,7 +23,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 @Repository
 public interface AuditRepository extends CrudRepository<Audit, Long> {

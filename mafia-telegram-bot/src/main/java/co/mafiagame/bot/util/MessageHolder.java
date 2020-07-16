@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 @Component
 public class MessageHolder {

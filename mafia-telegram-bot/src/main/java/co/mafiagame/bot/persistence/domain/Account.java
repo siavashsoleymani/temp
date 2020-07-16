@@ -27,7 +27,7 @@ import javax.persistence.*;
 import java.util.regex.Matcher;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 @Entity
 public class Account {

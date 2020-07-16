@@ -19,7 +19,7 @@
 package co.mafiagame.bot.persistence.domain;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public enum Action {
 	START_GAME, GAME_OVER, BE_MAFIA, GAME_TIMEOUT

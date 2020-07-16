@@ -22,7 +22,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 @Entity
 public class Audit {

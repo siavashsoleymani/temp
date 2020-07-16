@@ -145,7 +145,7 @@ public class Game {
 		if (gameState.totalPlayer() == votes.size()) {
 			ElectionResult result = new ElectionResult(votes);
 			if (finalElection && result.isSingleResult()) {
-				if (!Player.NOBODY_USERID.equals(result.getElects().get(0)))
+				if (!Player.NOBODY_USERID.equalsIgnoreCase(result.getElects().get(0)))
 					gameState.killPlayer(result.getElects().get(0));
 				if (!checkGameOver())
 					gameMood = nextMood();
@@ -211,7 +211,7 @@ public class Game {
 			throw new CommandNotAvailableInThisMoodException(DETECTIVE_ASK, this.gameMood);
 		gameState.checkPlayerExist(whomUserId);
 		Player realDetective = gameState.detective().orElseThrow(YouAreNotDetectiveException::new);
-		if (!Objects.equals(realDetective.getUserId(), requesterUserId))
+		if (!realDetective.getUserId().equalsIgnoreCase(requesterUserId))
 			throw new YouAreNotDetectiveException();
 		gameMood = nextMood();
 		configuration.changeTurn(this);
@@ -235,9 +235,9 @@ public class Game {
 			throw new CommandNotAvailableInThisMoodException(DOCTOR_HEAL, this.gameMood);
 		gameState.checkPlayerExist(whomUserId);
 		Player realDoctor = gameState.doctor().orElseThrow(YouAreNotDoctorException::new);
-		if (!Objects.equals(realDoctor.getUserId(), requesterUserId))
+		if (!realDoctor.getUserId().equalsIgnoreCase(requesterUserId))
 			throw new YouAreNotDoctorException();
-		if (killCandidate.getUserId().equals(whomUserId))
+		if (killCandidate.getUserId().equalsIgnoreCase(whomUserId))
 			killCandidate = Player.NOBODY;
 		gameMood = nextMood();
 		configuration.changeTurn(this);
@@ -311,13 +311,13 @@ public class Game {
 	private void checkElectionCondition(String command)
 			throws CommandNotAvailableInThisMoodException, ElectionAlreadyStartedException,
 			NoElectionStartedException {
-		if ((!Objects.equals(command, MAFIA_VOTE) && gameMood != DAY) ||
-				(Objects.equals(command, MAFIA_VOTE) && gameMood != NIGHT_MAFIA))
+		if ((!command.equalsIgnoreCase( MAFIA_VOTE) && gameMood != DAY) ||
+				(command.equalsIgnoreCase( MAFIA_VOTE) && gameMood != NIGHT_MAFIA))
 			throw new CommandNotAvailableInThisMoodException(command, gameMood);
-		if ((Objects.equals(command, START_ELECTION) ||
-				Objects.equals(command, START_FINAL_ELECTION)) && electionStarted)
+		if ((command.equalsIgnoreCase( START_ELECTION) ||
+				command.equalsIgnoreCase( START_FINAL_ELECTION)) && electionStarted)
 			throw new ElectionAlreadyStartedException();
-		if (Objects.equals(command, VOTE) && !electionStarted)
+		if (command.equalsIgnoreCase( VOTE) && !electionStarted)
 			throw new NoElectionStartedException();
 	}
 

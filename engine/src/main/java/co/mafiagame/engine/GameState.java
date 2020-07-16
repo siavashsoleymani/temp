@@ -52,7 +52,7 @@ class GameState {
 	}
 
 	void killPlayer(String playerUserId) {
-		if (Player.NOBODY_USERID.equals(playerUserId))
+		if (Player.NOBODY_USERID.equalsIgnoreCase(playerUserId))
 			return;
 		Player removed = alivePlayersMap.remove(playerUserId);
 		switch (removed.getRole()) {
@@ -98,7 +98,7 @@ class GameState {
 	}
 
 	void checkPlayerExist(String userId) throws PlayerNotFoundException {
-		if (!alivePlayersMap.containsKey(userId) && !Player.NOBODY.getUserId().equals(userId))
+		if (!alivePlayersMap.containsKey(userId) && !Player.NOBODY.getUserId().equalsIgnoreCase(userId))
 			throw new PlayerNotFoundException(userId);
 	}
 

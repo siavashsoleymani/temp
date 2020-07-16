@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 /**
- * @author hekmatof
+ * @author mashtaki
  */
 public class TUpdate {
 	@JsonProperty("update_id")
