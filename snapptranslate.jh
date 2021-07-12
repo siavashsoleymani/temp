@@ -1,0 +1,116 @@
+
+entity Order {
+	orderStatus OrderStatus
+}
+
+entity Customer{
+
+}
+
+enum OrderStatus {
+	 CREATED , WAITING_FOR_HANDOVER ,
+     VERIFY , WAIT_FOR_CORRECTION , IN_PROGRESS
+	 WAITING_FOR_DELIVERY , FINISHED 
+}
+
+entity Delivery{
+    deliveryType DeliveryType
+}
+
+entity DeliveryTimeSlot{
+	active Boolean,
+    stratTime Long,
+    endTime Long
+}
+
+enum DeliveryType{
+  NEED_TO_SEND , UPLOAD
+}
+
+entity Document{
+        file AnyBlob
+}
+
+entity Location{
+	lat Double,
+    lng Double,
+    exactAddress String
+
+}
+entity Category{
+   documentCategory CategoryType
+}
+
+entity SubCategory{
+   title String,
+   pricing PricingStrategy
+}
+
+enum PricingStrategy{
+	Automatic , Manual
+}
+
+
+enum CategoryType{
+     IDENTICAL_DOCUMENT , EDUCTIONAL_DOCUMENT , WORK_DOCUMENT , OTHER  
+}
+
+entity Invoice{
+		customerCost BigDecimal,
+		totalCost BigDecimal,
+        taxCost BigDecimal,
+        invoiceStatus InvoiceStatus
+}
+
+entity InvoiceItem{
+	title InvoiceTitle,
+    cost BigDecimal
+}
+
+enum InvoiceTitle{
+	DELIVERY, TRANSLATION
+}
+
+enum InvoiceStatus{
+	 PAID , UNPAID
+
+}
+
+entity TranslationCompany{
+		name String,
+        phoneNumber String,
+        secondPhoneNumber String  
+}
+relationship OneToOne {
+	Delivery {origin} to Location,
+    TranslationCompany{location} to Location,
+    Delivery {destination} to Location,
+    Order{delivery} to Delivery,
+    Order{handOver} to Delivery,
+    Order{translationCompany} to TranslationCompany,
+    Order{deliveryTimeSlot} to DeliveryTimeSlot,
+    Order{invoice} to Invoice{order}
+}
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+	Order{document} to Document{order},
+    Document{category} to Category{document},
+    Category{subCategory} to SubCategory{category}
+    Invoice{invoiceItem} to InvoiceItem{invoice}
+    Customer{order} to Order{customer}
+}
+
+
+// Set pagination options
+//paginate JobHistory, Employee with infinite-scroll
+paginate * with pagination
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
